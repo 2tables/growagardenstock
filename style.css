@@ -1,0 +1,74 @@
+@font-face {
+    font-family: 'Comic Neue Angular';
+    src: url('ComicNeue-Angular-Bold.ttf');
+}
+
+body{
+    font-family: 'Comic Neue Angular', sans-serif;
+    font-size: 35px;
+    background: #7B3E23;
+    color: white;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    gap: 0;
+    overflow-x: hidden;
+}
+#timer{
+    top: 0;
+    background: #55AD3B;
+    padding: 10px;
+    font-size: 25px;
+    width: 100%;
+}
+#stock{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+.item{
+    display: flex;
+    background: #48200E;
+    height: 150px;
+    width: 100%;
+    border-radius: 5px;
+}
+.item img{
+    width: 120px;
+    height: 120px;
+    margin: 10px;
+    border: 5px solid #36180A;
+    background: #855233;
+}
+.item_name{
+    display: grid;
+}
+ul{
+    margin: 0;
+    padding: 0;
+}
+li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+button{
+    margin: 0;
+    padding: 0;
+    height: 75px;
+    width: 100px;
+    font-family: 'Comic Neue Angular', sans-serif;
+    font-size: 20px;
+    color: white;
+    border: none;
+}
+li:nth-child(1)> button{
+    background: #55AD3B;
+}
+li:nth-child(2)> button{
+    background: #2f73da;
+}
+li:nth-child(3)> button{
+    background: #FD952E;
+}
