@@ -5,10 +5,19 @@
         <title>Grow A Garden Stock</title>
     </head>
     <body>
+        <div id="weatherinfo" class="weatherinfo" style="display: none;">
+            Grow a Garden is a Roblox indie game developed by Splitting Point Studios. Players start with a small patch of land to plant and nurture them as they grow into beautiful flowers, fruits, and vegetables. Players can harvest and sell produce to earn Sheckles that can be used to purchase seeds, gears, eggs, and decorative items.
+
+            Players can also complete quests and participate in seasonal events to earn free seeds, gears, pets, decorative items, and event-limited items.
+
+            As players experience the game, players will be able to enhance their crop growing experience by expanding land, using gears to enhance the crop growing experience, hatch eggs to earn pets with unique passive abilities to enhance crop growing experience, and experience various weathers to mutate and increase the value of their produce to earn more Sheckles or fulfill in-game quests.
+        </div>
         <ul>
+            <li><div id="weather"></div></li>
             <li><button onclick="switchMode('seed')">Seed</button></li>
             <li><button onclick="switchMode('gear')">Gear</button></li>
             <li><button onclick="switchMode('egg')">Eggs</button></li>
+            <li><button onclick="switchMode('merchant')">Merchant</button></li>
         </ul>
         <div id="timer"></div>
         <div id="stock"></div>
