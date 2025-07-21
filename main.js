@@ -2,35 +2,6 @@
 api.joshlei.com/v2/growagarden/stock
 api.joshlei.com/v2/growagarden/weather
 */
-
-/*
-
-carrot
-strawberry
-blueberry
-orange_tulip
-tomato
-corn
-daffodil
-watermelon
-pumpkin
-apple
-bamboo
-coconut
-cactus
-dragon_fruit
-mango
-grape
-mushroom
-pepper
-cacao
-beanstalk
-ember_lily
-sugar_apple
-burning_bud
-giant_pinecone
-
-*/
 mode = 'seed'; // 'seed', 'gear', 'egg'
 
 async function getStock(){
@@ -124,10 +95,6 @@ setInterval(function(){
     }
 
     if (hovered !== '') {
-        if(Math.floor((document.getElementById(hovered).getAttribute('end') - Date.now()) < 0)){
-            hovered = '';
-            getWeather();
-        }
         weather_info = "";
         weather_info += `
             <div class="weathername">
