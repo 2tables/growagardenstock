@@ -2,6 +2,16 @@
 api.joshlei.com/v2/growagarden/stock
 api.joshlei.com/v2/growagarden/weather
 */
+rarityColors = {
+    'Common': '#a9a9a9',
+    'Uncommon': '#52a961',
+    'Rare': '#0776fd',
+    'Legendary': '#fdfd00',
+    'Mythical': '#a955fe',
+    'Divine': '#fd5400',
+    'Prismatic': 'none; animation: rainbow 10s infinite linear; -webkit-animation: rainbow 3s infinite linear;',
+}
+
 mode = 'seed'; // 'seed', 'gear', 'egg'
 
 async function getStock(){
@@ -14,62 +24,100 @@ async function getStock(){
     console.log(data.egg_stock)
     switch (mode) {
         case 'seed':
-            seed_html = ''
-            for (i=0; i < data.seed_stock.length; i++) {
-                seed = data.seed_stock[i]
+            seed_html = '';
+            // Fetch all seed info in parallel and store in an array
+            seedInfos = await Promise.all(
+                data.seed_stock.map(seed => fetchApi('info/' + seed.item_id))
+            );
+            for (let i = 0; i < data.seed_stock.length; i++) {
+                seed = data.seed_stock[i];
+                seedInfo = seedInfos[i];
                 seed_html += `
                     <div class="item">
                         <img src="${seed.icon}" alt="${seed.display_name}"><br>
-                        <div class="item_name">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${seed.display_name}</span><br>
-                            <span style="color: #AAAAAA">x${seed.quantity} Stock</span>
+                        <div class="item_name"><span class="item_section">
+                            <span style="font-weight: bold; text-shadow: 0 4px black">${seed.display_name}</span>
+                                <span style="color: #AAAAAA; font-size: 25px;">${seed.quantity}x</span>
+		                        <br>
+	                            <span style="font-weight: bold; color: #06FD11">${Number(seedInfo.price).toLocaleString()}&cent;</span>
+		                        <br>
+		                        <span class="rarity" style="background-color: ${rarityColors[seedInfo.rarity]}">${seedInfo.rarity}</span>
+		</span>
                         </div>
-                    </div>`
+                    </div>`;
             }
             document.getElementById('stock').innerHTML = seed_html;
             break;
         case 'gear':
             gear_html = ''
-            for (i=0; i < data.gear_stock.length; i++) {
-                gear = data.gear_stock[i]
+            gearInfos = await Promise.all(
+                data.gear_stock.map(gear => fetchApi('info/' + gear.item_id))
+            );
+
+            for (let i = 0; i < data.gear_stock.length; i++) {
+                gear = data.gear_stock[i];
+                gearInfo = gearInfos[i];
                 gear_html += `
                     <div class="item">
                         <img src="${gear.icon}" alt="${gear.display_name}"><br>
-                        <div class="item_name">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${gear.display_name}</span><br>
-                            <span style="color: #AAAAAA">x${gear.quantity} Stock</span>
+                        <div class="item_name"><span class="item_section">
+                            <span style="font-weight: bold; text-shadow: 0 4px black">${gear.display_name}</span>
+                                <span style="color: #AAAAAA; font-size: 25px;">${gear.quantity}x</span>
+		                        <br>
+	                            <span style="font-weight: bold; color: #06FD11">${Number(gearInfo.price).toLocaleString()}&cent;</span>
+		                        <br>
+		                        <span class="rarity" style="background-color: ${rarityColors[gearInfo.rarity]}">${gearInfo.rarity}</span>
+		                        </span>
                         </div>
-                    </div>`
+                    </div>`;
             }
             document.getElementById('stock').innerHTML = gear_html;
             break;
         case 'egg':
             egg_html = ''
-            for (i=0; i < data.egg_stock.length; i++) {
-                egg = data.egg_stock[i]
+            eggInfos = await Promise.all(
+                data.egg_stock.map(egg => fetchApi('info/' + egg.item_id))
+            );
+            for (let i = 0; i < data.egg_stock.length; i++) {
+                egg = data.egg_stock[i];
+                eggInfo = eggInfos[i];
                 egg_html += `
                     <div class="item">
                         <img src="${egg.icon}" alt="${egg.display_name}"><br>
-                        <div class="item_name">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${egg.display_name}</span><br>
-                            <span style="color: #AAAAAA">x${egg.quantity} Stock</span>
+                        <div class="item_name"><span class="item_section">
+                            <span style="font-weight: bold; text-shadow: 0 4px black">${egg.display_name}</span>
+                                <span style="color: #AAAAAA; font-size: 25px;">${egg.quantity}x</span>
+		                        <br>
+	                            <span style="font-weight: bold; color: #06FD11">${Number(eggInfo.price).toLocaleString()}&cent;</span>
+		                        <br>
+		                        <span class="rarity" style="background-color: ${rarityColors[eggInfo.rarity]}">${eggInfo.rarity}</span>
+		                        </span>
                         </div>
-                    </div>`
+                    </div>`;
             }
             document.getElementById('stock').innerHTML = egg_html;
             break;
         case 'merchant':
             merchant_html = ''
-            for (i=0; i < data.travelingmerchant_stock.stock.length; i++) {
-                merchant = data.travelingmerchant_stock.stock[i]
+            merchantInfos = await Promise.all(
+                data.travelingmerchant_stock.stock.map(merchant => fetchApi('info/' + merchant.item_id))
+            );
+            for (let i = 0; i < data.travelingmerchant_stock.stock.length; i++) {
+                merchant = data.travelingmerchant_stock.stock[i];
+                merchantInfo = merchantInfos[i];
                 merchant_html += `
                     <div class="item">
                         <img src="${merchant.icon}" alt="${merchant.display_name}"><br>
-                        <div class="item_name">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${merchant.display_name}</span><br>
-                            <span style="color: #AAAAAA">x${merchant.quantity} Stock</span>
+                        <div class="item_name"><span class="item_section">
+                            <span style="font-weight: bold; text-shadow: 0 4px black">${merchant.display_name}</span>
+                                <span style="color: #AAAAAA; font-size: 25px;">${merchant.quantity}x</span>
+		                        <br>
+	                            <span style="font-weight: bold; color: #06FD11">${Number(merchantInfo.price).toLocaleString()}&cent;</span>
+		                        <br>
+		                        <span class="rarity" style="background-color: ${rarityColors[merchantInfo.rarity]}">${merchantInfo.rarity}</span>
+		                        </span>
                         </div>
-                    </div>`
+                    </div>`;
             }
             document.getElementById('stock').innerHTML = merchant_html;
             break;   
@@ -77,7 +125,6 @@ async function getStock(){
 }
 
 getStock();
-
 hovered = '';
 setInterval(function(){
     time = new Date();
@@ -133,8 +180,7 @@ async function getWeather(){
     for (i=0; i < weatherdata.weather.length; i++) {
         weather = weatherdata.weather[i]
         if(weather.active){
-            data1 = await fetchApi('info/' + weather.weather_id)
-            weatherdata1 = await data1.json()
+            weatherdata1 = await fetchApi('info/' + weather.weather_id)
             console.log(weatherdata1);
             weather_html += `
                 <div class="weather_item">

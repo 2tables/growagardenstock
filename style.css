@@ -44,6 +44,28 @@ body{
 .item_name{
     display: grid;
 }
+.item_name{
+    display: flex;
+		  justify-content: space-between;
+}
+.item_section{
+    display: block;
+		  align-content: space-between;
+}
+.rarity{
+    display: grid;
+    padding: 5px;
+    height: 35px;
+    width: 215px;
+	background:url("rarity.png");
+    background-size: 100% 100%;
+    aspect-ratio: 38 / 9;
+    background-blend-mode: multiply;
+    text-align: center;
+    align-items: center;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    border-radius: 3px;
+}
 ul{
     margin: 0;
     padding: 0;
@@ -106,4 +128,14 @@ li:nth-child(5)> button{
     font-size: 20px;
     color: white;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+@keyframes rainbow {
+    0% { background-color: #ff0000; }
+    14% { background-color: #ff7f00; }
+    28% { background-color: #ffff00; }
+    42% { background-color: #00ff00; }
+    57% { background-color: #0000ff; }
+    71% { background-color: #4b0082; }
+    85% { background-color: #9400d3; }
+    100% { background-color: #ff0000; }
 }
