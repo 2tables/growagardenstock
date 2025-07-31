@@ -5,8 +5,7 @@ api.joshlei.com/v2/growagarden/weather
 mode = 'seed'; // 'seed', 'gear', 'egg'
 
 async function getStock(){
-    res = await fetch('https://api.joshlei.com/v2/growagarden/stock')
-    data = await res.json()
+    data = await fetchApi('stock')
 
     console.log(data)
 
@@ -82,7 +81,7 @@ getStock();
 hovered = '';
 setInterval(function(){
     time = new Date();
-    // seed shop restocks every 5 minutes
+    // seed shop datatocks every 5 minutes
     if (time.getMinutes() % 5 == 0 && time.getSeconds() == 5) {
         getStock();
     }
@@ -126,8 +125,7 @@ function switchMode(tab){
 }
 
 async function getWeather(){
-    res = await fetch('https://api.joshlei.com/v2/growagarden/weather')
-    weatherdata = await res.json()
+    weatherdata = await fetchApi('weather')
 
     console.log(weatherdata)
 
@@ -135,8 +133,8 @@ async function getWeather(){
     for (i=0; i < weatherdata.weather.length; i++) {
         weather = weatherdata.weather[i]
         if(weather.active){
-            res1 = await fetch('https://api.joshlei.com/v2/growagarden/info/' + weather.weather_id)
-            weatherdata1 = await res1.json()
+            data1 = await fetchApi('info/' + weather.weather_id)
+            weatherdata1 = await data1.json()
             console.log(weatherdata1);
             weather_html += `
                 <div class="weather_item">
