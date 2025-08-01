@@ -1,3 +1,7 @@
+window.addEventListener("error", (event) => {
+  console.log(event)
+});
+//throw new TypeError('This is a test error'); // This will trigger the error handler
 /*
 api.joshlei.com/v2/growagarden/stock
 api.joshlei.com/v2/growagarden/weather
@@ -45,8 +49,8 @@ async function getStock(){
 		</span>
                         </div>
                     </div>`;
-            }
             document.getElementById('stock').innerHTML = seed_html;
+            }
             break;
         case 'gear':
             gear_html = ''
@@ -70,8 +74,8 @@ async function getStock(){
 		                        </span>
                         </div>
                     </div>`;
-            }
             document.getElementById('stock').innerHTML = gear_html;
+            }
             break;
         case 'egg':
             egg_html = ''
@@ -121,7 +125,14 @@ async function getStock(){
             }
             document.getElementById('stock').innerHTML = merchant_html;
             break;   
+        default:
+            document.getElementById('stock').innerHTML = `<div class="error">...Got it.</div>`;
+            break;
     }
+    seed_html = '';
+    gear_html = '';
+    egg_html = '';
+    merchant_html = '';
 }
 
 getStock();
@@ -210,3 +221,7 @@ addEventListener("mousemove", (event) => {
 
 setInterval(getWeather, 10000)
 getWeather();
+
+
+
+

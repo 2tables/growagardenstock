@@ -139,3 +139,15 @@ li:nth-child(5)> button{
     85% { background-color: #9400d3; }
     100% { background-color: #ff0000; }
 }
+.error {
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 24px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
