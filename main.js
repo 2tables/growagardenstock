@@ -13,7 +13,7 @@ rarityColors = {
     'Legendary': '#fdfd00',
     'Mythical': '#a955fe',
     'Divine': '#fd5400',
-    'Prismatic': 'none; animation: rainbow 10s infinite linear; -webkit-animation: rainbow 3s infinite linear;',
+    'Prismatic': 'red; animation: rainbow 10s infinite linear; -webkit-animation: rainbow 3s infinite linear;',
 }
 
 mode = 'seed'; // 'seed', 'gear', 'egg'
