@@ -1,5 +1,5 @@
 const BASE_URL = 'https://api.joshlei.com/v2/growagarden/';
-const JSTUDIO_KEY = 'js_01b807c05e82f9df286fc1335695e9a770a383402f2a1b44270680df01cdacaa';
+const JSTUDIO_KEY = 'js_' + process.env.JSTUDIO_KEY;
 
 async function fetchApi(endpoint, params = '') {
     const url = BASE_URL + endpoint + params;
