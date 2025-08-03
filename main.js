@@ -1,7 +1,28 @@
 window.addEventListener("error", (event) => {
-  console.log(event)
+    //black screen (but kinda transparent) before error
+    errorelem = document.createElement('div');
+    errorelem.className = 'black';
+    document.body.appendChild(errorelem);
+
+    //error handler
+    console.log(event);
+    errorelem = document.createElement('div');
+    errorelem.className = 'error';
+    errorelem.innerHTML = `
+        <h1>Whoops!</h1>
+        Looks like an error occurred. Sorry about that!<br>
+        <span style="color: #AAAAAA; font-size: 12px;">
+            ${event.message}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;at ${event.filename.replace(window.origin + "/", "")}:${event.lineno}:${event.colno}
+        </span><br>
+        <button onclick="window.location.reload()">Reload</button>
+        <button onclick="history.back()">Leave</button>`;
+  document.body.appendChild(errorelem);
+  return true;
 });
 //throw new TypeError('This is a test error'); // This will trigger the error handler
+
+
 /*
 api.joshlei.com/v2/growagarden/stock
 api.joshlei.com/v2/growagarden/weather
