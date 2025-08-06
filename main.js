@@ -46,22 +46,6 @@ const rarityColors = {
 let mode = 'seed'; // 'seed', 'gear', 'egg'
 let hovered = '';
 
-function getNextHalfHourTimestamp() {
-  let now = new Date();
-  now.setSeconds(0);
-  now.setMilliseconds(0);
-
-  if (now.getMinutes() < 30) {
-    now.setMinutes(30);
-  } else {
-    now.setMinutes(0);
-    now.setHours(now.getHours() + 1);
-  }
-
-  return Math.floor(now.getTime());
-}
-
-
 // okay, so the merchant appears every 4 hours, being 12am, 4am, 8am, 12pm, 4pm, 8pm utc, and they're available for 30 minutes
 // so i need to do getUTCHours() % 4 and then make it so it works
 seedRestock = 0;
@@ -143,7 +127,7 @@ async function getStock() {
     console.log(data.egg_stock)
 
     seedRestock = data.seed_stock[0].end_date_unix;
-    eggRestock = getNextHalfHourTimestamp();
+    eggRestock = new Date(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')} ${Math.floor(new Date().getHours())+Math.floor((new Date().getMinutes() % 60) / 30)}:${Math.floor(((new Date().getMinutes() + 30) % 60) / 30) * 30}:00`).getTime() / 1000;
 
 
     switch (mode) {
@@ -241,7 +225,6 @@ addEventListener("mousemove", (event) => {
 
 setInterval(getWeather, 10000)
 getWeather();
-
 
 
 
