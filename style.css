@@ -42,15 +42,25 @@ body{
     background: #855233;
 }
 .item_name{
-    display: grid;
-}
-.item_name{
     display: flex;
-		  justify-content: space-between;
+	justify-content: space-between;
+    width: 100%;
 }
 .item_section{
     display: block;
-		  align-content: space-between;
+	align-content: space-between;
+}
+.item_desc{
+    justify-content: right;
+    display: flex;
+    font-size: 30px;
+    color: #ffffff6f;
+    text-align: right;
+    align-items: end;
+    height: 100%;
+    vertical-align: bottom;
+    transform: translate(-10px, -10px);
+    width: 500px;
 }
 .rarity{
     display: grid;
@@ -141,8 +151,6 @@ li:nth-child(5)> button{
 }
 .error {
     position: fixed;
-    top: 50vh;
-    left: 50vw;
     background-color: white;
     color: black;
     padding: 10px;

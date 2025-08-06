@@ -1,4 +1,8 @@
+errorelem = false;
 window.addEventListener("error", (event) => {
+    if(errorelem){
+        return true; // If an error is already being displayed, ignore further errors
+    }
     //black screen (but kinda transparent) before error
     errorelem = document.createElement('div');
     errorelem.className = 'black';
@@ -18,6 +22,8 @@ window.addEventListener("error", (event) => {
         <button onclick="window.location.reload()">Reload</button>
         <button onclick="history.back()">Leave</button>`;
   document.body.appendChild(errorelem);
+  errorelem.style.top = (window.innerHeight / 2 - errorelem.offsetHeight / 2) + 'px';
+    errorelem.style.left = (window.innerWidth / 2 - errorelem.offsetWidth / 2) + 'px';
   return true;
 });
 //throw new TypeError('This is a test error'); // This will trigger the error handler
@@ -27,17 +33,52 @@ window.addEventListener("error", (event) => {
 api.joshlei.com/v2/growagarden/stock
 api.joshlei.com/v2/growagarden/weather
 */
-rarityColors = {
+const rarityColors = {
     'Common': '#a9a9a9',
     'Uncommon': '#52a961',
     'Rare': '#0776fd',
     'Legendary': '#fdfd00',
     'Mythical': '#a955fe',
     'Divine': '#fd5400',
-    'Prismatic': 'red; animation: rainbow 10s infinite linear; -webkit-animation: rainbow 3s infinite linear;',
+    'Prismatic': 'red; animation: rainbow 10s infinite linear; -webkit-animation: rainbow 3s infinite linear;'
 }
 
-mode = 'seed'; // 'seed', 'gear', 'egg'
+let mode = 'seed'; // 'seed', 'gear', 'egg'
+let hovered = '';
+
+async function renderItems(items, infos) {
+    let html = '';
+    items.forEach((item, i) => {
+        let info = infos[i];
+        html += `
+            <div class="item">
+                <img src="${item.icon}" alt="${item.display_name}"><br>
+                <div class="item_name">
+                <span class="item_section">
+                    <span style="font-weight: bold; text-shadow: 0 4px black">${item.display_name}</span>
+                        <span style="color: #AAAAAA; font-size: 25px;">
+                            ${item.quantity}x
+                       </span>
+		               <br>
+	                    <span style="font-weight: bold; color: #06FD11">
+                          ${Number(info.price).toLocaleString()}&cent;
+                        </span>
+		                   <br>
+		                <span class="rarity" style="background-color: ${rarityColors[info.rarity]}">
+                           ${info.rarity}
+                        </span>
+	                </span>
+                </span>
+                <span class="item_section">
+                    <span class="item_desc">
+                        ${info.description}
+                    </span>
+                </div>
+            </div>`
+    });
+    document.getElementById("stock").innerHTML = html;
+}
+
 
 async function getStock(){
     data = await fetchApi('stock')
@@ -49,102 +90,28 @@ async function getStock(){
     console.log(data.egg_stock)
     switch (mode) {
         case 'seed':
-            seed_html = '';
-            // Fetch all seed info in parallel and store in an array
             seedInfos = await Promise.all(
                 data.seed_stock.map(seed => fetchApi('info/' + seed.item_id))
             );
-            for (let i = 0; i < data.seed_stock.length; i++) {
-                seed = data.seed_stock[i];
-                seedInfo = seedInfos[i];
-                seed_html += `
-                    <div class="item">
-                        <img src="${seed.icon}" alt="${seed.display_name}"><br>
-                        <div class="item_name"><span class="item_section">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${seed.display_name}</span>
-                                <span style="color: #AAAAAA; font-size: 25px;">${seed.quantity}x</span>
-		                        <br>
-	                            <span style="font-weight: bold; color: #06FD11">${Number(seedInfo.price).toLocaleString()}&cent;</span>
-		                        <br>
-		                        <span class="rarity" style="background-color: ${rarityColors[seedInfo.rarity]}">${seedInfo.rarity}</span>
-		</span>
-                        </div>
-                    </div>`;
-            document.getElementById('stock').innerHTML = seed_html;
-            }
+            renderItems(data.seed_stock, seedInfos);
             break;
         case 'gear':
-            gear_html = ''
             gearInfos = await Promise.all(
                 data.gear_stock.map(gear => fetchApi('info/' + gear.item_id))
             );
-
-            for (let i = 0; i < data.gear_stock.length; i++) {
-                gear = data.gear_stock[i];
-                gearInfo = gearInfos[i];
-                gear_html += `
-                    <div class="item">
-                        <img src="${gear.icon}" alt="${gear.display_name}"><br>
-                        <div class="item_name"><span class="item_section">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${gear.display_name}</span>
-                                <span style="color: #AAAAAA; font-size: 25px;">${gear.quantity}x</span>
-		                        <br>
-	                            <span style="font-weight: bold; color: #06FD11">${Number(gearInfo.price).toLocaleString()}&cent;</span>
-		                        <br>
-		                        <span class="rarity" style="background-color: ${rarityColors[gearInfo.rarity]}">${gearInfo.rarity}</span>
-		                        </span>
-                        </div>
-                    </div>`;
-            document.getElementById('stock').innerHTML = gear_html;
-            }
+            renderItems(data.gear_stock, gearInfos);
             break;
         case 'egg':
-            egg_html = ''
             eggInfos = await Promise.all(
                 data.egg_stock.map(egg => fetchApi('info/' + egg.item_id))
             );
-            for (let i = 0; i < data.egg_stock.length; i++) {
-                egg = data.egg_stock[i];
-                eggInfo = eggInfos[i];
-                egg_html += `
-                    <div class="item">
-                        <img src="${egg.icon}" alt="${egg.display_name}"><br>
-                        <div class="item_name"><span class="item_section">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${egg.display_name}</span>
-                                <span style="color: #AAAAAA; font-size: 25px;">${egg.quantity}x</span>
-		                        <br>
-	                            <span style="font-weight: bold; color: #06FD11">${Number(eggInfo.price).toLocaleString()}&cent;</span>
-		                        <br>
-		                        <span class="rarity" style="background-color: ${rarityColors[eggInfo.rarity]}">${eggInfo.rarity}</span>
-		                        </span>
-                        </div>
-                    </div>`;
-            }
-            document.getElementById('stock').innerHTML = egg_html;
+            renderItems(data.egg_stock, eggInfos);
             break;
         case 'merchant':
-            merchant_html = ''
             merchantInfos = await Promise.all(
                 data.travelingmerchant_stock.stock.map(merchant => fetchApi('info/' + merchant.item_id))
             );
-            for (let i = 0; i < data.travelingmerchant_stock.stock.length; i++) {
-                merchant = data.travelingmerchant_stock.stock[i];
-                merchantInfo = merchantInfos[i];
-                merchant_html += `
-                    <div class="item">
-                        <img src="${merchant.icon}" alt="${merchant.display_name}"><br>
-                        <div class="item_name"><span class="item_section">
-                            <span style="font-weight: bold; text-shadow: 0 4px black">${merchant.display_name}</span>
-                                <span style="color: #AAAAAA; font-size: 25px;">${merchant.quantity}x</span>
-		                        <br>
-	                            <span style="font-weight: bold; color: #06FD11">${Number(merchantInfo.price).toLocaleString()}&cent;</span>
-		                        <br>
-		                        <span class="rarity" style="background-color: ${rarityColors[merchantInfo.rarity]}">${merchantInfo.rarity}</span>
-		                        </span>
-                        </div>
-                    </div>`;
-            }
-            document.getElementById('stock').innerHTML = merchant_html;
+            renderItems(data.travelingmerchant_stock.stock, merchantInfos);
             break;   
         default:
             document.getElementById('stock').innerHTML = `<div class="error">...Got it.</div>`;
@@ -187,7 +154,7 @@ setInterval(function(){
 
     }
 
-}, 1)
+}, 100)
 
 function switchMode(tab){
     mode = tab;
