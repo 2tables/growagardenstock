@@ -1,6 +1,6 @@
 errorelem = false;
 window.addEventListener("error", (event) => {
-    if(errorelem){
+    if (errorelem) {
         return true; // If an error is already being displayed, ignore further errors
     }
     //black screen (but kinda transparent) before error
@@ -21,10 +21,10 @@ window.addEventListener("error", (event) => {
         </span><br>
         <button onclick="window.location.reload()">Reload</button>
         <button onclick="history.back()">Leave</button>`;
-  document.body.appendChild(errorelem);
-  errorelem.style.top = (window.innerHeight / 2 - errorelem.offsetHeight / 2) + 'px';
+    document.body.appendChild(errorelem);
+    errorelem.style.top = (window.innerHeight / 2 - errorelem.offsetHeight / 2) + 'px';
     errorelem.style.left = (window.innerWidth / 2 - errorelem.offsetWidth / 2) + 'px';
-  return true;
+    return true;
 });
 //throw new TypeError('This is a test error'); // This will trigger the error handler
 
@@ -45,6 +45,43 @@ const rarityColors = {
 
 let mode = 'seed'; // 'seed', 'gear', 'egg'
 let hovered = '';
+
+// okay, so the merchant appears every 4 hours, being 12am, 4am, 8am, 12pm, 4pm, 8pm utc, and they're available for 30 minutes
+// so i need to do getUTCHours() % 4 and then make it so it works
+seedRestock = 0;
+eggRestock = 0;
+setInterval(function () {
+    time = new Date();
+    // seed shop restocks every 5 minutes
+    if (time.getMinutes() % 5 == 0 && time.getSeconds() == 5) {
+        getStock();
+    }
+    if (mode == 'egg') {
+        distance = eggRestock - time.getTime() / 1000;
+        document.getElementById('timer').innerHTML = `Restocks in ${Math.floor(distance / 60)}:${Math.floor(distance % 60).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })}`
+    } else if (mode == 'merchant') {
+        document.getElementById('timer').innerHTML = `Restocks in ${(time.getUTCHours() % 4 - 4) * -1}:${((time.getMinutes() - 60) * -1).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })} (${data.travelingmerchant_stock.merchantName})`
+    } else {
+        distance = seedRestock - time.getTime() / 1000;
+        document.getElementById('timer').innerHTML = `Restocks in ${Math.floor(distance / 60)}:${Math.floor(distance % 60).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })}`
+    }
+
+    if (hovered !== '') {
+        weather_info = "";
+        weather_info += `
+            <div class="weathername">
+                ${document.getElementById(hovered).getAttribute('name')}
+            </div>`;
+        weather_info += `
+            <div class="weatherdesc">
+                ${document.getElementById(hovered).getAttribute('desc')}<br>
+                <span style="color: #AAAAAA">Ends in ${Math.floor((document.getElementById(hovered).getAttribute('end') - Date.now() / 1000) / 60)}:${Math.floor((document.getElementById(hovered).getAttribute('end') - Date.now() / 1000) % 60).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })}</span>
+            </div>`;
+        document.getElementById('weatherinfo').innerHTML = weather_info;
+
+    }
+
+}, 100)
 
 async function renderItems(items, infos) {
     let html = '';
@@ -80,7 +117,7 @@ async function renderItems(items, infos) {
 }
 
 
-async function getStock(){
+async function getStock() {
     data = await fetchApi('stock')
 
     console.log(data)
@@ -88,6 +125,11 @@ async function getStock(){
     console.log(data.seed_stock)
     console.log(data.gear_stock)
     console.log(data.egg_stock)
+
+    seedRestock = data.seed_stock[0].end_date_unix;
+    eggRestock = new Date(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')} ${Math.floor(new Date().getHours())+1}:00:00`).getTime() / 1000;
+
+
     switch (mode) {
         case 'seed':
             seedInfos = await Promise.all(
@@ -111,10 +153,14 @@ async function getStock(){
             merchantInfos = await Promise.all(
                 data.travelingmerchant_stock.stock.map(merchant => fetchApi('info/' + merchant.item_id))
             );
-            renderItems(data.travelingmerchant_stock.stock, merchantInfos);
-            break;   
+            if (data.travelingmerchant_stock.stock[0].end_date_unix < time.getDate() / 1000) {
+                renderItems(data.travelingmerchant_stock.stock, merchantInfos);
+            } else {
+                document.getElementById('stock').innerHTML = `No merchant yet`
+            }
+            break;
         default:
-            document.getElementById('stock').innerHTML = `<div class="error">...Got it.</div>`;
+            document.getElementById('stock').innerHTML = `...okay.`
             break;
     }
     seed_html = '';
@@ -125,42 +171,12 @@ async function getStock(){
 
 getStock();
 hovered = '';
-setInterval(function(){
-    time = new Date();
-    // seed shop datatocks every 5 minutes
-    if (time.getMinutes() % 5 == 0 && time.getSeconds() == 5) {
-        getStock();
-    }
-    if(mode == 'egg'){
-        document.getElementById('timer').innerHTML = `Restocks in ${(time.getMinutes() % 30 - 29) * -1}:${((time.getSeconds() - 60) * -1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}`
-    } else if (mode == 'merchant') {
-        document.getElementById('timer').innerHTML = `Restocks in ${(time.getHours() % 12 - 3)}:${((time.getMinutes() - 60) * -1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})} (${data.travelingmerchant_stock.merchantName})`
-    } else {
-        document.getElementById('timer').innerHTML = `Restocks in ${(time.getMinutes() % 5 - 4) * -1}:${((time.getSeconds() - 60) * -1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}`
-    }
 
-    if (hovered !== '') {
-        weather_info = "";
-        weather_info += `
-            <div class="weathername">
-                ${document.getElementById(hovered).getAttribute('name')}
-            </div>`;
-        weather_info += `
-            <div class="weatherdesc">
-                ${document.getElementById(hovered).getAttribute('desc')}<br>
-                <span style="color: #AAAAAA">Ends in ${Math.floor((document.getElementById(hovered).getAttribute('end') - Date.now() / 1000) / 60)}:${Math.floor((document.getElementById(hovered).getAttribute('end') - Date.now() / 1000) % 60).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}</span>
-            </div>`;
-        document.getElementById('weatherinfo').innerHTML = weather_info;
-
-    }
-
-}, 100)
-
-function switchMode(tab){
+function switchMode(tab) {
     mode = tab;
-    if (tab == 'egg'){
+    if (tab == 'egg') {
         document.getElementById('timer').style.background = '#FD952E';
-    } else if (tab == 'gear'){
+    } else if (tab == 'gear') {
         document.getElementById('timer').style.background = '#2f73da';
     } else if (tab == 'merchant') {
         document.getElementById('timer').style.background = '#12B4FD';
@@ -170,15 +186,15 @@ function switchMode(tab){
     getStock();
 }
 
-async function getWeather(){
+async function getWeather() {
     weatherdata = await fetchApi('weather')
 
     console.log(weatherdata)
 
     weather_html = `<div class="weather">`
-    for (i=0; i < weatherdata.weather.length; i++) {
+    for (i = 0; i < weatherdata.weather.length; i++) {
         weather = weatherdata.weather[i]
-        if(weather.active){
+        if (weather.active) {
             weatherdata1 = await fetchApi('info/' + weather.weather_id)
             console.log(weatherdata1);
             weather_html += `
@@ -186,7 +202,7 @@ async function getWeather(){
                     <img src="${weather.icon}" id="${weather.weather_id}" name="${weatherdata1.display_name}" desc="${weatherdata1.description}" end="${weather.end_duration_unix}" onmouseleave="unhover()" onmouseover="hover('${weather.weather_id}')" ><br>
                 </div>`
         }
-        if(weather.weather_id == hovered && !weather.active){
+        if (weather.weather_id == hovered && !weather.active) {
             hovered = "";
         }
     }
@@ -194,11 +210,11 @@ async function getWeather(){
 
     document.getElementById('weather').innerHTML = weather_html;
 }
-function hover(id){
+function hover(id) {
     hovered = id;
     document.getElementById('weatherinfo').style.display = 'block';
 }
-function unhover(){
+function unhover() {
     hovered = '';
     document.getElementById('weatherinfo').style.display = 'none';
 }
