@@ -127,7 +127,7 @@ async function getStock() {
     console.log(data.egg_stock)
 
     seedRestock = data.seed_stock[0].end_date_unix;
-    eggRestock = new Date(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')} ${Math.floor(new Date().getHours())+1}:00:00`).getTime() / 1000;
+    eggRestock = new Date(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')} ${Math.floor(new Date().getHours())+Math.floor((new Date().getMinutes() % 60) / 30)}:${Math.floor(((new Date().getMinutes() + 30) % 60) / 30) * 30}:00`).getTime() / 1000;
 
 
     switch (mode) {
