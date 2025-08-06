@@ -47,7 +47,7 @@ let mode = 'seed'; // 'seed', 'gear', 'egg'
 let hovered = '';
 
 function getNextHalfHourTimestamp() {
-  const now = new Date();
+  let now = new Date();
   now.setSeconds(0);
   now.setMilliseconds(0);
 
@@ -58,7 +58,7 @@ function getNextHalfHourTimestamp() {
     now.setHours(now.getHours() + 1);
   }
 
-  return Math.floor(now.getTime() / 1000);
+  return Math.floor(now.getTime());
 }
 
 
